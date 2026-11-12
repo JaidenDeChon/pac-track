@@ -225,7 +225,8 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 .side-nav .navlbl { font: 600 11px var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); padding: 0 10px 6px; }
 .content { min-width: 0; padding-left: max(16px, min(40px, 3vw)); padding-right: max(16px, env(safe-area-inset-right, 0px), min(40px, 3vw)); padding-block: 0 48px; }
 .content .race { padding-block: 28px 16px; }
-.scrim { position: fixed; inset: 0; background: rgba(13, 16, 21, .45); z-index: 40; }
+.scrim { position: fixed; inset: 0; background: rgba(13, 16, 21, .45); z-index: 40; opacity: 0; visibility: hidden; }
+.scrim.open { opacity: 1; visibility: visible; }
 
 @media (max-width: 959px) {
   .menu-btn { display: inline-grid; }
@@ -240,7 +241,13 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   .side-nav { top: 0; }
   kbd { display: none; }
 }
-@media (prefers-reduced-motion: no-preference) { .side-nav { transition: transform .2s ease, visibility .2s; } }
+/* Drawer and scrim open and close together, over 0.2s. */
+@media (prefers-reduced-motion: no-preference) {
+  .side-nav { transition: transform .2s ease, visibility 0s linear .2s; }
+  .side-nav.open { transition: transform .2s ease, visibility 0s; }
+  .scrim { transition: opacity .2s ease, visibility 0s linear .2s; }
+  .scrim.open { transition: opacity .2s ease, visibility 0s; }
+}
 .search-btn { display: none; }
 .site-head.scrolled:not(.search-open) .search-btn { display: inline-grid; }
 .side-nav button.nav-link { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; background: none; border-radius: calc(var(--radius) - 2px); color: var(--ink-3); font: 500 13px var(--f-body); cursor: pointer; margin-top: auto; }
@@ -356,7 +363,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
       <button class="nav-link" id="nav-collapse" aria-pressed="false" aria-label="Collapse sidebar"><svg aria-hidden="true"><use href="#n-collapse"/></svg><span>Collapse</span></button>
     </div>
   </nav>
-  <div class="scrim" id="scrim" hidden></div>
+  <div class="scrim" id="scrim"></div>
   <main class="content">
 
   <div class="race">
@@ -580,8 +587,8 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 
   // Drawer
   var nav = $('#side-nav'), scrim = $('#scrim'), mb = $('#menu-btn');
-  function openNav() { nav.classList.add('open'); scrim.hidden = false; mb.setAttribute('aria-expanded', 'true'); $('#nav-close').focus(); }
-  function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.hidden = true; mb.setAttribute('aria-expanded', 'false'); mb.focus(); }
+  function openNav() { nav.classList.add('open'); scrim.classList.add('open'); mb.setAttribute('aria-expanded', 'true'); $('#nav-close').focus(); }
+  function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); mb.focus(); }
   mb.addEventListener('click', openNav);
   $('#nav-close').addEventListener('click', closeNav);
   scrim.addEventListener('click', closeNav);
