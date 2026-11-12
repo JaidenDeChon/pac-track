@@ -231,7 +231,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 @media (max-width: 959px) {
   .menu-btn { display: inline-grid; }
   .shell { grid-template-columns: minmax(0, 1fr); }
-  .side-nav { position: fixed; z-index: 50; top: 0; left: 0; bottom: 0; height: auto; width: min(300px, 86vw); padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: max(12px, env(safe-area-inset-left, 0px)); background: var(--surface); box-shadow: var(--shadow); transform: translateX(-105%); visibility: hidden; }
+  .side-nav { position: fixed; z-index: 50; top: 0; left: 0; bottom: 0; height: auto; width: min(300px, 86vw); padding-top: calc(20px + env(safe-area-inset-top, 0px)); padding-left: max(12px, env(safe-area-inset-left, 0px)); background: var(--surface); box-shadow: var(--shadow); transform: translateX(calc(-100% - 40px)); will-change: transform; }
   .side-nav.open { transform: none; visibility: visible; }
   .content { padding-left: max(16px, env(safe-area-inset-left, 0px)); }
 }
@@ -242,12 +242,13 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   kbd { display: none; }
 }
 /* Drawer and scrim open and close together, over 0.2s. Opening decelerates into place; closing eases out gently. */
-:root { --ease-in-drawer: cubic-bezier(.22, 1, .36, 1); --ease-out-drawer: cubic-bezier(.5, 0, .75, .4); }
+/* The closed drawer stays painted just off screen (made inert in script), so opening starts on the first frame with nothing to draw. */
+:root { --ease-drawer: cubic-bezier(.32, .72, 0, 1); }
+.scrim { will-change: opacity; }
 @media (prefers-reduced-motion: no-preference) {
-  .side-nav { transition: transform .2s var(--ease-out-drawer), visibility 0s linear .2s; }
-  .side-nav.open { transition: transform .2s var(--ease-in-drawer), visibility 0s; }
-  .scrim { transition: opacity .2s var(--ease-out-drawer), visibility 0s linear .2s; }
-  .scrim.open { transition: opacity .2s var(--ease-in-drawer), visibility 0s; }
+  .side-nav { transition: transform .2s var(--ease-drawer); }
+  .scrim { transition: opacity .2s var(--ease-drawer), visibility 0s linear .2s; }
+  .scrim.open { transition: opacity .2s var(--ease-drawer), visibility 0s; }
 }
 .search-btn { display: none; }
 .site-head.scrolled:not(.search-open) .search-btn { display: inline-grid; }
@@ -588,8 +589,14 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 
   // Drawer
   var nav = $('#side-nav'), scrim = $('#scrim'), mb = $('#menu-btn');
-  function openNav() { nav.classList.add('open'); scrim.classList.add('open'); mb.setAttribute('aria-expanded', 'true'); $('#nav-close').focus(); }
-  function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); mb.focus(); }
+  var drawerMq = window.matchMedia('(max-width: 959px)');
+  function syncInert() { var off = drawerMq.matches && !nav.classList.contains('open'); nav.inert = off; if (off) nav.setAttribute('aria-hidden', 'true'); else nav.removeAttribute('aria-hidden'); }
+  if (drawerMq.addEventListener) drawerMq.addEventListener('change', syncInert);
+  syncInert();
+  // Focus moves only after the slide finishes, so it can't nudge the drawer or the page mid-animation.
+  function afterSlide(fn) { var done = false; function go() { if (!done) { done = true; nav.removeEventListener('transitionend', go); fn(); } } nav.addEventListener('transitionend', go); setTimeout(go, 260); }
+  function openNav() { nav.classList.add('open'); scrim.classList.add('open'); mb.setAttribute('aria-expanded', 'true'); syncInert(); afterSlide(function () { if (nav.classList.contains('open')) $('#nav-close').focus({ preventScroll: true }); }); }
+  function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); syncInert(); mb.focus({ preventScroll: true }); }
   mb.addEventListener('click', openNav);
   $('#nav-close').addEventListener('click', closeNav);
   scrim.addEventListener('click', closeNav);
