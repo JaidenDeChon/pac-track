@@ -10,5 +10,5 @@ Read `docs/PLAN.md` before starting work. It holds the roadmap, decisions, data 
 - **Every displayed number** carries its data date and source filing ID.
 - **FEC donor data** must never be used for solicitation or commercial purposes, including email digests.
 - Reading requires no sign-in.
-- Do not pick a component library or design system; that decision is the maintainer's.
+- UI uses Nuxt UI + Tailwind CSS and follows `docs/design/DESIGN.md` and `docs/design/tokens.css`. Design changes are the maintainer's call.
 - When a decision in `docs/PLAN.md` changes, update the file in the same change.
