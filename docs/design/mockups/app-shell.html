@@ -241,12 +241,13 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   .side-nav { top: 0; }
   kbd { display: none; }
 }
-/* Drawer and scrim open and close together, over 0.2s. */
+/* Drawer and scrim open and close together, over 0.2s. Opening decelerates into place; closing eases out gently. */
+:root { --ease-in-drawer: cubic-bezier(.22, 1, .36, 1); --ease-out-drawer: cubic-bezier(.5, 0, .75, .4); }
 @media (prefers-reduced-motion: no-preference) {
-  .side-nav { transition: transform .2s ease, visibility 0s linear .2s; }
-  .side-nav.open { transition: transform .2s ease, visibility 0s; }
-  .scrim { transition: opacity .2s ease, visibility 0s linear .2s; }
-  .scrim.open { transition: opacity .2s ease, visibility 0s; }
+  .side-nav { transition: transform .2s var(--ease-out-drawer), visibility 0s linear .2s; }
+  .side-nav.open { transition: transform .2s var(--ease-in-drawer), visibility 0s; }
+  .scrim { transition: opacity .2s var(--ease-out-drawer), visibility 0s linear .2s; }
+  .scrim.open { transition: opacity .2s var(--ease-in-drawer), visibility 0s; }
 }
 .search-btn { display: none; }
 .site-head.scrolled:not(.search-open) .search-btn { display: inline-grid; }
