@@ -10,7 +10,7 @@ Reference for building the UI. Tokens live in [`tokens.css`](tokens.css). Open t
 ## Gestalt
 
 - Neutral and content-first. The site's frame is ink, paper and one brass accent. Photos and figures carry the color.
-- Modern, with a touch of patriotism carried by type and a star motif. No eagles, flags, or stock imagery.
+- Modern, with a touch of patriotism carried by the display type and the star mark. No eagles, flags, or stock imagery.
 - **Minimal on-screen text.** Labels are short. Explanations, data stamps (date + filing ID) and definitions go in ⓘ popovers attached to the thing they describe. If a line of text can move into a popover, it does.
 - Equal treatment: every person gets the same layout, crop, size and color weight.
 
@@ -27,7 +27,7 @@ Numbers use `tabular-nums`.
 ## Shape and chrome
 
 - Radius 10px for cards, boxes, buttons and popovers. Pills are fully rounded.
-- Header: white surface, brass star mark beside the wordmark, and a 10px band of brass stars on ink beneath it.
+- Header: surface background with a hairline bottom border, and a brass star mark beside the wordmark.
 - Focus ring: 3px brass, offset 2px.
 
 ## Color roles
@@ -48,6 +48,17 @@ Each color has one job. Party color never doubles as interface or status color.
 **Party colors:** Democratic blue and Republican red have equal lightness, so neither reads as louder. Every other party uses neutral slate. A party color always appears with the party letter and name.
 
 Links are underlined ink.
+
+## Page shell
+
+Mockup: [`mockups/app-shell.html`](mockups/app-shell.html).
+
+- **Header** (sticky): star mark + wordmark, search, then icon-only theme buttons (system, light, dark).
+- **Search** is visible at the top of the page. Once the page is scrolled down, the field hides and a search icon button takes its place. The icon button and the `/` key bring the field back.
+- **Search results** drop down from the field, grouped as People, Donors, Committees and Bills. People show a party-colored initial and their office. A 5-digit zip or a street address adds a "Races for…" result at the top.
+- **Sidebar**: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades. Icons and labels; the current page is an ink pill. On desktop it can collapse to icons only (the choice is saved in the browser). Under 960px it becomes a slide-out drawer opened from a menu button.
+- **Footer**: Methodology · Coverage · Corrections, and the license.
+- **Admin**: no sign-in link anywhere for readers. Admins go to `/admin` directly.
 
 ## Race card
 

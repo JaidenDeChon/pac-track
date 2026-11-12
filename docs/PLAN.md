@@ -71,7 +71,9 @@ Next tier: civil rights & LGBTQ equality · foreign policy & defense (incl. Isra
 
 - Classic layout: sidebar nav + global header with search.
 - Search returns grouped results (people, donors, bills, committees) and detects zip codes and addresses.
-- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades · Methodology · Coverage · Corrections
+- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades. Collapsible to icons on desktop.
+- Footer: Methodology · Coverage · Corrections.
+- Admin sign-in only at the `/admin` route; nothing links to it from the reader UI.
 - Every view's state lives in the URL (shareable permalinks instead of saved searches).
 - Component library: **Nuxt UI + Tailwind CSS.**
 - Design system: see [`docs/design/DESIGN.md`](design/DESIGN.md) and [`docs/design/tokens.css`](design/tokens.css).

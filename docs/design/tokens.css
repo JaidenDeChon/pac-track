@@ -19,7 +19,6 @@
 
   /* Accent */
   --pt-brass: #A47418;      /* focus ring, star mark */
-  --pt-star-band: #141820;  /* band behind the header stars, same in both modes */
 
   /* Party: equal lightness for D and R */
   --pt-dem: oklch(0.50 0.15 262);
