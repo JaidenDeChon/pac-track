@@ -339,7 +339,7 @@ footer { padding-block: 32px 48px; color: var(--ink-3); font-size: 12px; border-
   }
   function card(c, ci) {
     var h = '<article class="card p-' + c.party + '">';
-    h += '<div class="photo">' + (c.photo ? '<svg role="img" aria-label="Portrait of ' + esc(c.name) + '"><use href="#sil"/></svg><span class="credit">Official portrait</span>' : '<span class="initials" aria-label="No portrait on file">' + c.name.split(' ').map(function (w) { return w[0]; }).join('') + '</span>') + '</div>';
+    h += '<div class="photo">' + (c.photo ? '<svg role="img" aria-label="Portrait of ' + esc(c.name) + '"><use href="#sil"/></svg>' : '<span class="initials" aria-label="No portrait on file">' + c.name.split(' ').map(function (w) { return w[0]; }).join('') + '</span>') + '</div>';
     h += '<div class="id"><h3>' + esc(c.name) + '</h3><div class="chips"><span class="chip"><b>' + c.pl + '</b>' + c.pn + '</span><span class="status">' + c.status + '</span></div></div>';
     INFO['fp' + ci] = { t: 'From PACs, 2026', p: 'PAC and party contributions to the campaign.', rows: [['From PACs', c.fromPacs, 'As of Oct 15, 2026 · FEC filing 18495' + (70 + ci)]] };
     INFO['of' + ci] = { t: 'Outside spending supporting, 2026', p: 'Independent expenditures, FEC Schedule E.', rows: [['Supporting ' + c.name.split(' ')[0], c.outFor, 'As of Nov 1, 2026 · Schedule E'], ['Opposing ' + c.name.split(' ')[0], c.outAgainst, 'As of Nov 1, 2026 · Schedule E']] };
