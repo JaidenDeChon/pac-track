@@ -242,7 +242,6 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 }
 @media (prefers-reduced-motion: no-preference) { .side-nav { transition: transform .2s ease, visibility .2s; } }
 .search-btn { display: none; }
-.site-head.scrolled:not(.search-open) .search { display: none; }
 .site-head.scrolled:not(.search-open) .search-btn { display: inline-grid; }
 .side-nav button.nav-link { display: flex; align-items: center; gap: 10px; width: 100%; padding: 8px 10px; border: 0; background: none; border-radius: calc(var(--radius) - 2px); color: var(--ink-3); font: 500 13px var(--f-body); cursor: pointer; margin-top: auto; }
 .side-nav button.nav-link:hover { background: var(--surface-2); color: var(--ink); }
@@ -258,6 +257,35 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 .site-foot .lic { margin-left: auto; }
 @media (max-width: 959px) { .side-nav button.nav-link { display: none; } }
 
+/* Search hide/show: animated, never changes the header's height, so the page never moves. */
+.search { transition: opacity .2s ease, transform .2s ease, visibility 0s; }
+.site-head.scrolled:not(.search-open) .search { opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none; transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
+@media (max-width: 640px) {
+  :root { --sr-h: 51px; } /* search row: 40px field + 10px bottom padding + 1px border */
+  .site-head .wrap { flex-wrap: nowrap; }
+  /* The search row hangs below the bar, out of flow. A fixed spacer at the top of the page holds its place. */
+  .search { position: absolute; left: 0; right: 0; top: 100%; margin: 0; max-width: none; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--surface); border-bottom: 1px solid var(--rule); clip-path: inset(0 0 -100vh 0); transition: transform .25s ease, clip-path .25s ease, opacity .25s ease, visibility 0s; }
+  /* Slides up behind the bar: the clip moves down as fast as the row moves up, so it never covers the bar. */
+  .site-head.scrolled:not(.search-open) .search { transform: translateY(-100%); clip-path: inset(100% 0 -100vh 0); opacity: 0; transition: transform .25s ease, clip-path .25s ease, opacity .25s ease, visibility 0s linear .25s; }
+  .results { left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); top: calc(100% - 2px); }
+  .shell { padding-top: var(--sr-h); }
+}
+@media (prefers-reduced-motion: reduce) { .search, .site-head.scrolled:not(.search-open) .search { transition: none; } }
+
+/* Sidebar foot: theme buttons and collapse */
+.nav-foot { margin-top: auto; display: grid; gap: 6px; padding-top: 12px; border-top: 1px solid var(--rule); }
+.nav-foot .seg { display: flex; }
+.nav-foot .seg button { flex: 1; padding: 7px 0; }
+.side-nav .nav-foot button.nav-link { margin-top: 0; }
+.shell.collapsed .nav-foot .seg { flex-direction: column; }
+.shell.collapsed .nav-foot .seg button { padding: 8px 0; }
+
+/* Drawer head: the logo sits exactly where it is in the header bar. */
+.drawer-head { display: none; }
+@media (max-width: 959px) {
+  .side-nav { padding-top: env(safe-area-inset-top, 0px); }
+  .drawer-head { display: flex; align-items: center; gap: 12px; min-height: calc(var(--head-h, 57px) - 1px); box-sizing: content-box; margin: 0 -12px 0 calc(-1 * max(12px, env(safe-area-inset-left, 0px))); padding-left: max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--rule); }
+}
 </style>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -285,6 +313,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
     <symbol id="n-sys" viewBox="0 0 24 24"><path d="M3 5h18v11H3zM9 20h6M12 16v4"/></symbol>
     <symbol id="n-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></symbol>
     <symbol id="n-collapse" viewBox="0 0 24 24"><path d="M4 4h16v16H4zM9 4v16M15 9l-3 3 3 3"/></symbol>
+    <symbol id="n-close" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
     <symbol id="n-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></symbol>
   </defs>
 </svg>
@@ -299,17 +328,16 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
     </div>
     <div class="head-end">
       <button class="iconbtn search-btn" id="search-btn" aria-label="Search"><svg><use href="#n-search"/></svg></button>
-      <div class="seg icons" role="group" aria-label="Theme">
-        <button id="t-system" data-theme-set="system" aria-pressed="true" aria-label="System theme"><svg><use href="#n-sys"/></svg></button>
-        <button id="t-light" data-theme-set="light" aria-pressed="false" aria-label="Light theme"><svg><use href="#n-sun"/></svg></button>
-        <button id="t-dark" data-theme-set="dark" aria-pressed="false" aria-label="Dark theme"><svg><use href="#n-moon"/></svg></button>
-      </div>
     </div>
   </div>
 </header>
 
 <div class="shell">
   <nav class="side-nav" id="side-nav" aria-label="Main">
+    <div class="drawer-head">
+      <button class="iconbtn" id="nav-close" aria-label="Close menu"><svg><use href="#n-close"/></svg></button>
+      <div class="mark"><svg aria-hidden="true"><use href="#star"/></svg>pac-track</div>
+    </div>
     <ul>
       <li><a href="#officials" title="Officials &amp; Candidates"><svg aria-hidden="true"><use href="#n-person"/></svg><span>Officials &amp; Candidates</span></a></li>
       <li><a href="#races" aria-current="page" title="Races"><svg aria-hidden="true"><use href="#n-race"/></svg><span>Races</span></a></li>
@@ -319,7 +347,14 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
       <li><a href="#lobbying" title="Lobbying"><svg aria-hidden="true"><use href="#n-lobby"/></svg><span>Lobbying</span></a></li>
       <li><a href="#disclosures" title="Disclosures &amp; Trades"><svg aria-hidden="true"><use href="#n-disc"/></svg><span>Disclosures &amp; Trades</span></a></li>
     </ul>
-    <button class="nav-link" id="nav-collapse" aria-pressed="false" aria-label="Collapse sidebar"><svg aria-hidden="true"><use href="#n-collapse"/></svg><span>Collapse</span></button>
+    <div class="nav-foot">
+      <div class="seg icons" role="group" aria-label="Theme">
+        <button id="t-system" data-theme-set="system" aria-pressed="true" aria-label="System theme" title="System"><svg><use href="#n-sys"/></svg></button>
+        <button id="t-light" data-theme-set="light" aria-pressed="false" aria-label="Light theme" title="Light"><svg><use href="#n-sun"/></svg></button>
+        <button id="t-dark" data-theme-set="dark" aria-pressed="false" aria-label="Dark theme" title="Dark"><svg><use href="#n-moon"/></svg></button>
+      </div>
+      <button class="nav-link" id="nav-collapse" aria-pressed="false" aria-label="Collapse sidebar"><svg aria-hidden="true"><use href="#n-collapse"/></svg><span>Collapse</span></button>
+    </div>
   </nav>
   <div class="scrim" id="scrim" hidden></div>
   <main class="content">
@@ -518,7 +553,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   q.addEventListener('focus', draw);
   document.addEventListener('click', function (e) { if (!e.target.closest('#search')) results.hidden = true; });
   document.addEventListener('keydown', function (e) {
-    if (e.key === '/' && document.activeElement !== q && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); head.classList.add('search-open'); q.focus(); q.select(); }
+    if (e.key === '/' && document.activeElement !== q && !/INPUT|TEXTAREA/.test(document.activeElement.tagName)) { e.preventDefault(); head.classList.add('search-open'); q.focus({ preventScroll: true }); q.select(); }
     if (e.key === 'Escape') { results.hidden = true; closeNav(); }
   });
 
@@ -529,13 +564,13 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
     var down = window.scrollY > 80;
     head.classList.toggle('scrolled', down);
     if (!down) head.classList.remove('search-open');
+    if (down && head.classList.contains('search-open') && document.activeElement !== q && results.hidden) head.classList.remove('search-open');
     if (down && !head.classList.contains('search-open')) results.hidden = true;
-    setHH();
   }
   window.addEventListener('scroll', onScroll, { passive: true });
   window.addEventListener('resize', setHH);
-  onScroll();
-  $('#search-btn').addEventListener('click', function () { head.classList.add('search-open'); setHH(); q.focus(); draw(); });
+  setHH(); onScroll();
+  $('#search-btn').addEventListener('click', function () { head.classList.add('search-open'); q.focus({ preventScroll: true }); draw(); });
 
   // Sidebar collapse
   var nc = $('#nav-collapse');
@@ -545,9 +580,10 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 
   // Drawer
   var nav = $('#side-nav'), scrim = $('#scrim'), mb = $('#menu-btn');
-  function openNav() { nav.classList.add('open'); scrim.hidden = false; mb.setAttribute('aria-expanded', 'true'); }
-  function closeNav() { nav.classList.remove('open'); scrim.hidden = true; mb.setAttribute('aria-expanded', 'false'); }
+  function openNav() { nav.classList.add('open'); scrim.hidden = false; mb.setAttribute('aria-expanded', 'true'); $('#nav-close').focus(); }
+  function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.hidden = true; mb.setAttribute('aria-expanded', 'false'); mb.focus(); }
   mb.addEventListener('click', openNav);
+  $('#nav-close').addEventListener('click', closeNav);
   scrim.addEventListener('click', closeNav);
   nav.addEventListener('click', function (e) {
     var a = e.target.closest('a'); if (!a) return; e.preventDefault();
