@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>body{margin:0}</style>
+<title>pac-track Race Cards</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Libre+Caslon+Display&family=Public+Sans:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: race page. Race header, issue bar, then candidate cards in a wrapping grid. Study panels below. Direction A (Broadside). */
+:root {
+  --paper: #F5F6F8;
+  --surface: #FFFFFF;
+  --surface-2: #ECEEF2;
+  --ink: #141820;
+  --ink-2: #485060;
+  --ink-3: #697184;
+  --rule: #D8DCE4;
+  --brass: #A47418;
+  --brass-soft: #F3E8CF;
+  --shadow: 0 8px 28px rgba(20, 24, 32, .14);
+
+  --dem: oklch(0.50 0.15 262);
+  --rep: oklch(0.50 0.17 27);
+  --oth: oklch(0.50 0.02 262);
+  --dem-tint: oklch(0.95 0.025 262);
+  --rep-tint: oklch(0.95 0.025 27);
+  --oth-tint: oklch(0.95 0.005 262);
+
+  --critical: oklch(0.57 0.17 52);
+  --critical-tint: oklch(0.95 0.04 60);
+  --warning: oklch(0.70 0.14 82);
+  --warning-tint: oklch(0.96 0.05 90);
+  --success: oklch(0.52 0.10 168);
+  --success-tint: oklch(0.95 0.03 168);
+
+  --f-display: "Libre Caslon Display", "Libre Caslon Text", Georgia, serif;
+  --f-head: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-body: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0D1015; --surface: #151920; --surface-2: #1F242D; --ink: #E9EBEF; --ink-2: #AAB1BD; --ink-3: #868E9C; --rule: #2A303B;
+    --brass: #D8A645; --brass-soft: #3A2F18; --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+    --dem: oklch(0.72 0.12 262); --rep: oklch(0.72 0.13 27); --oth: oklch(0.72 0.02 262);
+    --dem-tint: oklch(0.27 0.05 262); --rep-tint: oklch(0.27 0.05 27); --oth-tint: oklch(0.27 0.01 262);
+    --critical: oklch(0.74 0.15 55); --critical-tint: oklch(0.29 0.06 55);
+    --warning: oklch(0.82 0.13 85); --warning-tint: oklch(0.30 0.05 85);
+    --success: oklch(0.74 0.10 168); --success-tint: oklch(0.27 0.04 168);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0D1015; --surface: #151920; --surface-2: #1F242D; --ink: #E9EBEF; --ink-2: #AAB1BD; --ink-3: #868E9C; --rule: #2A303B;
+  --brass: #D8A645; --brass-soft: #3A2F18; --shadow: 0 8px 28px rgba(0, 0, 0, .5);
+  --dem: oklch(0.72 0.12 262); --rep: oklch(0.72 0.13 27); --oth: oklch(0.72 0.02 262);
+  --dem-tint: oklch(0.27 0.05 262); --rep-tint: oklch(0.27 0.05 27); --oth-tint: oklch(0.27 0.01 262);
+  --critical: oklch(0.74 0.15 55); --critical-tint: oklch(0.29 0.06 55);
+  --warning: oklch(0.82 0.13 85); --warning-tint: oklch(0.30 0.05 85);
+  --success: oklch(0.74 0.10 168); --success-tint: oklch(0.27 0.04 168);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: 15px; line-height: 1.5; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+.wrap { max-width: 1160px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: var(--ink); text-decoration-thickness: 1px; text-underline-offset: 3px; }
+:focus-visible { outline: 3px solid var(--brass); outline-offset: 2px; border-radius: 2px; }
+button { font: inherit; color: inherit; }
+
+/* Header */
+.site-head { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--rule); }
+.site-head .wrap { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; padding-block: 12px; }
+.mark { display: flex; align-items: center; gap: 8px; font-family: var(--f-head); font-weight: 800; letter-spacing: -0.02em; font-size: 20px; }
+.mark svg { width: 18px; height: 18px; fill: var(--brass); }
+.controls { margin-left: auto; }
+.seg { display: inline-flex; border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; background: var(--surface-2); }
+.seg button { font: 500 13px var(--f-body); color: var(--ink-2); background: transparent; border: 0; padding: 6px 12px; cursor: pointer; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--paper); }
+
+/* Race header */
+.race { padding-block: 32px 16px; }
+.eyebrow { font: 600 12px var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); }
+h1 { font-family: var(--f-display); font-weight: 400; font-size: clamp(32px, 5vw, 48px); line-height: 1.08; margin: 6px 0 4px; text-wrap: balance; }
+.race-sub { color: var(--ink-2); margin: 0; }
+
+/* Issue bar */
+.issuebar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; padding: 10px 12px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); margin-bottom: 20px; }
+.issuebar .lbl { font: 600 12px var(--f-body); color: var(--ink-3); text-transform: uppercase; letter-spacing: .06em; margin-right: 4px; }
+.pill { font: 500 13px var(--f-body); padding: 4px 10px; border-radius: 999px; background: var(--surface-2); color: var(--ink); }
+.issuebar .src { font-size: 12px; color: var(--ink-3); }
+.linkbtn { margin-left: auto; background: none; border: 0; padding: 4px 2px; font: 600 13px var(--f-body); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+
+/* Cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; align-items: start; }
+.card { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; min-width: 0; }
+.photo { position: relative; aspect-ratio: 4 / 3; max-width: 100%; background: var(--surface-2); border-bottom: 4px solid var(--party); overflow: hidden; }
+.photo svg { position: absolute; inset: 8% 0 0; width: 100%; height: 100%; color: var(--ink-3); opacity: .55; }
+.photo .initials { position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--f-display); font-size: 88px; letter-spacing: .02em; color: var(--ink-3); }
+.photo .credit { position: absolute; right: 8px; bottom: 6px; font: 500 10px var(--f-mono); color: var(--ink-3); background: var(--surface); padding: 1px 5px; border-radius: 2px; opacity: .85; }
+.id { padding: 14px 16px 12px; display: grid; gap: 8px; }
+.id h3 { margin: 0; font-family: var(--f-head); font-weight: 800; letter-spacing: -0.02em; font-size: 22px; line-height: 1.15; }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 600 12px var(--f-body); padding: 2px 8px 2px 2px; border-radius: 999px; background: var(--party-tint); }
+.chip b { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 999px; background: var(--party); color: var(--surface); font-size: 11px; }
+.status { font: 500 12px var(--f-body); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--rule); color: var(--ink-2); }
+.p-dem { --party: var(--dem); --party-tint: var(--dem-tint); }
+.p-rep { --party: var(--rep); --party-tint: var(--rep-tint); }
+.p-oth { --party: var(--oth); --party-tint: var(--oth-tint); }
+
+.figs { margin: 0; display: grid; grid-template-columns: 1fr 1fr; border-top: 1px solid var(--rule); }
+.figs > div { padding: 10px 16px 12px; min-width: 0; }
+.figs > div + div { border-left: 1px solid var(--rule); }
+.figs dt { display: flex; align-items: center; gap: 4px; font-size: 12px; color: var(--ink-3); }
+.figs dd { margin: 2px 0 0; font: 600 20px var(--f-body); font-variant-numeric: tabular-nums; }
+.info { display: inline-grid; place-items: center; width: 22px; height: 22px; margin: -4px 0; border: 0; background: none; border-radius: 999px; cursor: pointer; color: var(--ink-3); }
+.info svg { width: 14px; height: 14px; fill: currentColor; }
+.info:hover { color: var(--ink); background: var(--surface-2); }
+
+.lenses { border-top: 1px solid var(--rule); padding: 12px 16px 16px; display: grid; gap: 16px; }
+.lenses-head { font: 600 12px var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); margin-bottom: -6px; }
+.lens { display: grid; gap: 6px; }
+.lens-top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.lens-name { display: flex; align-items: center; gap: 2px; font: 600 14px var(--f-body); min-width: 0; }
+.measure { font-size: 13px; color: var(--ink-2); }
+.rec { flex: none; font: 600 12px var(--f-body); padding: 2px 8px; border-radius: 999px; border: 1px solid var(--ink-3); white-space: nowrap; }
+.rec.none { border-style: dashed; color: var(--ink-3); font-weight: 500; }
+.sides { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.side { min-width: 0; display: grid; gap: 6px; padding: 8px 10px; border-radius: var(--radius); }
+.side.for { background: var(--success-tint); }
+.side.against { background: var(--critical-tint); }
+.sl { display: flex; align-items: center; gap: 4px; font: 600 11px var(--f-body); color: var(--ink-2); }
+.sl svg { width: 14px; height: 14px; flex: none; }
+.for .sl svg { fill: var(--success); }
+.against .sl svg { fill: var(--critical); }
+.for .av { border-color: var(--success-tint); }
+.against .av { border-color: var(--critical-tint); }
+.ag { display: flex; align-items: center; min-height: 30px; }
+.ag .none { font-size: 12px; color: var(--ink-3); }
+.av { width: 30px; height: 30px; border-radius: 999px; border: 2px solid var(--surface); margin-left: -8px; background: var(--ink); color: var(--paper); font: 700 10.5px var(--f-body); letter-spacing: .02em; display: grid; place-items: center; cursor: pointer; padding: 0; position: relative; }
+.av:first-child { margin-left: 0; }
+.av:hover, .av[aria-expanded="true"] { z-index: 1; box-shadow: 0 0 0 2px var(--brass); }
+.av.more { background: transparent; border-color: transparent; color: var(--ink-3); font-weight: 600; width: auto; padding: 0 4px; margin-left: 2px; }
+.card-foot { border-top: 1px dashed var(--rule); padding: 8px 16px; font: 500 11px var(--f-mono); color: var(--ink-3); display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap; }
+
+/* Popover */
+.pop { position: absolute; z-index: 20; width: min(320px, calc(100vw - 32px)); background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); padding: 14px; font-size: 13px; }
+.pop h5 { margin: 0 0 4px; font: 700 14px var(--f-body); }
+.pop p { margin: 0 0 8px; color: var(--ink-2); }
+.pop dl { margin: 0; display: grid; gap: 8px; }
+.pop dl div { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; padding-top: 8px; border-top: 1px solid var(--rule); }
+.pop dt { color: var(--ink-2); }
+.pop dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; text-align: right; }
+.pop .stamp { grid-column: 1 / -1; font: 400 11px var(--f-mono); color: var(--ink-3); }
+.pop .ex { margin: 10px 0 0; font: 500 10px var(--f-mono); color: var(--ink-3); }
+
+/* Study panels */
+section.panel { padding-block: 36px; border-top: 1px solid var(--rule); margin-top: 36px; }
+section.panel + section.panel { margin-top: 0; }
+h2 { font-family: var(--f-head); font-weight: 800; letter-spacing: -0.02em; font-size: 24px; margin: 0 0 6px; text-wrap: balance; }
+.lede { color: var(--ink-2); margin: 0 0 20px; max-width: 68ch; }
+
+.picker { max-width: 560px; background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); box-shadow: var(--shadow); padding: 20px; }
+.picker h3 { margin: 0 0 4px; font-family: var(--f-display); font-weight: 400; font-size: 28px; }
+.picker p { margin: 0 0 14px; color: var(--ink-2); font-size: 14px; }
+.picker .grp { font: 600 11px var(--f-body); letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3); margin: 14px 0 8px; }
+.opts { display: flex; flex-wrap: wrap; gap: 6px; }
+.opt { font: 500 13px var(--f-body); padding: 6px 12px; border-radius: 999px; border: 1px solid var(--rule); background: var(--surface); cursor: pointer; }
+.opt[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.opt .rank { color: var(--ink-3); font-variant-numeric: tabular-nums; margin-right: 4px; }
+.opt[aria-pressed="true"] .rank { color: inherit; opacity: .7; }
+.picker .actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+.btn { font: 600 13px var(--f-body); padding: 8px 14px; border-radius: var(--radius); cursor: pointer; border: 1px solid var(--ink); background: var(--ink); color: var(--paper); }
+.btn.ghost { background: transparent; color: var(--ink); border-color: var(--rule); }
+.picker .note { font-size: 12px; color: var(--ink-3); margin-top: 12px; }
+
+.map { overflow-x: auto; }
+.map table { border-collapse: collapse; min-width: 560px; width: 100%; font-size: 13px; }
+.map th, .map td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.map th { font: 600 11px var(--f-body); letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); }
+.map code { font: 400 12px var(--f-mono); background: var(--surface-2); padding: 1px 5px; border-radius: 3px; }
+.map i { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; border: 1px solid var(--rule); }
+
+footer { padding-block: 32px 48px; color: var(--ink-3); font-size: 12px; border-top: 1px solid var(--rule); }
+@media (max-width: 420px) { .photo .initials { font-size: 72px; } }
+@media (prefers-reduced-motion: no-preference) { .av, .opt, .seg button { transition: background-color .2s, color .2s; } }
+</style>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="star" viewBox="0 0 24 24"><path d="M12 2l2.9 6.9 7.1.6-5.4 4.7 1.7 7.1L12 17.6 5.7 21.3l1.7-7.1L2 9.5l7.1-.6z"/></symbol>
+    <symbol id="sil" viewBox="0 0 120 90" preserveAspectRatio="xMidYMax meet"><circle cx="60" cy="34" r="19" fill="currentColor"/><path d="M18 90c3-24 20-36 42-36s39 12 42 36z" fill="currentColor"/></symbol>
+    <symbol id="yes" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm-2 15-5-5 1.4-1.4 3.6 3.6 7.6-7.6L19 8z"/></symbol>
+    <symbol id="no" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm4.3 12.9-1.4 1.4L12 13.4l-2.9 2.9-1.4-1.4 2.9-2.9-2.9-2.9 1.4-1.4 2.9 2.9 2.9-2.9 1.4 1.4-2.9 2.9z"/></symbol>
+    <symbol id="i" viewBox="0 0 24 24"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16zm-1-5h2v2h-2zm0-8h2v6h-2z" transform="rotate(180 12 12)"/></symbol>
+  </defs>
+</svg>
+
+<header class="site-head">
+  <div class="wrap">
+    <div class="mark"><svg aria-hidden="true"><use href="#star"/></svg>pac-track</div>
+    <div class="controls">
+      <div class="seg" role="group" aria-label="Theme">
+        <button id="t-system" data-theme-set="system" aria-pressed="true">System</button>
+        <button id="t-light" data-theme-set="light" aria-pressed="false">Light</button>
+        <button id="t-dark" data-theme-set="dark" aria-pressed="false">Dark</button>
+      </div>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div class="race">
+    <div class="eyebrow">Race · example data</div>
+    <h1>Arizona District 7</h1>
+    <p class="race-sub">U.S. House · 2026 general election · 3 candidates</p>
+  </div>
+
+  <div class="issuebar" role="group" aria-label="Your issues">
+    <span class="lbl">Your issues</span>
+    <span class="pill">Money in politics</span>
+    <span class="pill">Health care costs</span>
+    <span class="pill">Cost of living</span>
+    <button class="linkbtn" id="edit-issues">Change issues</button>
+  </div>
+
+  <div class="cards" id="cards"></div>
+
+  <section class="panel" id="picker-panel">
+    <h2>Issue picker</h2>
+    <div class="picker" role="dialog" aria-labelledby="pk-title">
+      <h3 id="pk-title">Your issues</h3>
+      <div class="grp">Pew Research, 2026</div>
+      <div class="opts" id="opts-main"></div>
+      <div class="grp">More issues</div>
+      <div class="opts" id="opts-more"></div>
+      <div class="actions">
+        <button class="btn ghost" id="pk-skip">Skip</button>
+        <button class="btn" id="pk-save">Save</button>
+      </div>
+      <div class="note" id="pk-count">3 of 3 selected</div>
+    </div>
+  </section>
+
+  <section class="panel">
+    <h2>Nuxt UI color mapping</h2>
+    <div class="map">
+      <table>
+        <thead><tr><th>Nuxt UI color</th><th>pac-track role</th><th>Used for</th></tr></thead>
+        <tbody>
+          <tr><td><code>primary</code></td><td><i style="background:var(--ink)"></i>Ink</td><td>Buttons, active nav, selected pills</td></tr>
+          <tr><td><code>neutral</code></td><td><i style="background:var(--ink-3)"></i>Cool slate</td><td>Text, borders, surfaces, avatars</td></tr>
+          <tr><td><code>secondary</code></td><td><i style="background:var(--brass)"></i>Brass</td><td>Focus ring, star mark. Never a large fill</td></tr>
+          <tr><td><code>error</code></td><td><i style="background:var(--critical)"></i>Vermilion</td><td>Errors, always with icon and text</td></tr>
+          <tr><td><code>warning</code></td><td><i style="background:var(--warning)"></i>Amber</td><td>Stale data, pending re-verification</td></tr>
+          <tr><td><code>success</code></td><td><i style="background:var(--success)"></i>Teal green</td><td>Approved, verified</td></tr>
+          <tr><td><code>info</code></td><td><i style="background:var(--ink-2)"></i>Ink 2</td><td>Neutral notices</td></tr>
+          <tr><td>none (custom tokens)</td><td><i style="background:var(--dem)"></i><i style="background:var(--rep)"></i><i style="background:var(--oth)"></i>Party</td><td>Party chip and the line under the photo. Nothing else</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<footer><div class="wrap">Example data.</div></footer>
+
+<div class="pop" id="pop" role="dialog" hidden></div>
+
+<script>
+(function () {
+  var html = document.documentElement;
+  function store(k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } }
+  function setTheme(t) {
+    if (t === 'system') html.removeAttribute('data-theme'); else html.setAttribute('data-theme', t);
+    document.querySelectorAll('[data-theme-set]').forEach(function (b) { b.setAttribute('aria-pressed', String(b.dataset.themeSet === t)); });
+    store('pt-theme', t);
+  }
+  document.querySelectorAll('[data-theme-set]').forEach(function (b) { b.addEventListener('click', function () { setTheme(b.dataset.themeSet); }); });
+  var saved = store('pt-theme'); if (saved === 'light' || saved === 'dark') setTheme(saved);
+
+  function $(s) { return document.querySelector(s); }
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function usd(n) { return '$' + n.toLocaleString('en-US'); }
+  function info(key, label) { return '<button class="info" data-info="' + key + '" aria-label="About ' + esc(label) + '"><svg><use href="#i"/></svg></button>'; }
+
+  var PACS = {
+    tf: 'Example Transparency Fund', cr: 'Sample Clean Races PAC', vb: 'Demo Voters Bloc',
+    fs: 'Example Free Speech PAC', bp: 'Sample Business Roundtable PAC',
+    ph: 'Example Patients First PAC', nu: 'Sample Nurses Alliance PAC', rx: 'Demo Pharma Assn. PAC', ih: 'Example Insurers PAC', sc: 'Sample Seniors Coalition',
+    hb: 'Example Homebuilders PAC', rt: 'Sample Renters Union PAC', lr: 'Demo Landlords Council PAC', bk: 'Example Bankers PAC', wk: 'Sample Workers Fund'
+  };
+  function ini(name) { return name.replace(/^(Example|Sample|Demo)\s+/, '').split(/\s+/).filter(function (w) { return /^[A-Z]/.test(w) && w !== 'PAC'; }).slice(0, 2).map(function (w) { return w[0]; }).join(''); }
+
+  var MEASURES = {
+    money: { lens: 'Money in politics', bill: 'H.R. 0001', title: 'Example Disclosure Act' },
+    health: { lens: 'Health care costs', bill: 'H.R. 0002', title: 'Example Drug Pricing Act' },
+    living: { lens: 'Cost of living', bill: 'H.R. 0003', title: 'Example Housing Supply Act' }
+  };
+
+  // g: [pacKey, direct, outsideFor, outsideAgainst]
+  var CANDS = [
+    { name: 'Alex Rivera', party: 'dem', pl: 'D', pn: 'Democratic', status: 'Incumbent', photo: true,
+      fromPacs: 412300, outFor: 388500, outAgainst: 96300,
+      lenses: {
+        money: { rec: 'Voted for', recSrc: 'Roll call 88, Mar 4, 2026', for: [['tf', 5000, 0, 0], ['cr', 5000, 42000, 0], ['vb', 2500, 0, 0]], against: [] },
+        health: { rec: 'Voted for', recSrc: 'Roll call 214, Jun 12, 2026', for: [['ph', 5000, 0, 0], ['nu', 10000, 120000, 0], ['sc', 2500, 0, 0]], against: [['rx', 2000, 0, 0]] },
+        living: { rec: 'Cosponsor', recSrc: 'congress.gov cosponsor list, Feb 2, 2026', for: [['hb', 5000, 0, 0], ['rt', 5000, 0, 0], ['wk', 10000, 64000, 0], ['bk', 1000, 0, 0]], against: [] }
+      } },
+    { name: 'Jordan Mercer', party: 'rep', pl: 'R', pn: 'Republican', status: 'Challenger', photo: false,
+      fromPacs: 297750, outFor: 412000, outAgainst: 151000,
+      lenses: {
+        money: { rec: 'Opposes', recSrc: 'Candidate questionnaire, item 2, Aug 19, 2026', for: [], against: [['fs', 5000, 88000, 0], ['bp', 5000, 0, 0]] },
+        health: { rec: 'No position', recSrc: 'No vote, statement or questionnaire answer on file', for: [['sc', 1000, 0, 0]], against: [['rx', 5000, 0, 0], ['ih', 5000, 54000, 0]] },
+        living: { rec: 'Supports', recSrc: 'Campaign website, issues page, archived Sep 3, 2026', for: [['hb', 5000, 0, 0], ['bk', 5000, 0, 0]], against: [['lr', 2500, 0, 0]] }
+      } },
+    { name: 'Sam Okafor', party: 'oth', pl: 'L', pn: 'Libertarian', status: 'Challenger', photo: true,
+      fromPacs: 18200, outFor: 0, outAgainst: 0,
+      lenses: {
+        money: { rec: 'Opposes', recSrc: 'Candidate questionnaire, item 2, Sep 1, 2026', for: [], against: [['fs', 1000, 0, 0]] },
+        health: { rec: 'No position', recSrc: 'No vote, statement or questionnaire answer on file', for: [], against: [] },
+        living: { rec: 'Supports', recSrc: 'Candidate questionnaire, item 7, Sep 1, 2026', for: [], against: [] }
+      } }
+  ];
+
+  var INFO = {};
+  function group(list, ci, lk, side) {
+    if (!list.length) return '<span class="none" aria-label="None on file">—</span>';
+    var max = 4, out = '';
+    list.slice(0, max).forEach(function (g, gi) {
+      var n = PACS[g[0]];
+      out += '<button class="av" aria-expanded="false" data-pac="' + [ci, lk, side, gi].join('|') + '" aria-label="' + esc(n) + '">' + ini(n) + '</button>';
+    });
+    if (list.length > max) out += '<button class="av more" aria-label="' + (list.length - max) + ' more">+' + (list.length - max) + '</button>';
+    return out;
+  }
+  function card(c, ci) {
+    var h = '<article class="card p-' + c.party + '">';
+    h += '<div class="photo">' + (c.photo ? '<svg role="img" aria-label="Portrait of ' + esc(c.name) + '"><use href="#sil"/></svg>' : '<span class="initials" aria-label="No portrait on file">' + c.name.split(' ').map(function (w) { return w[0]; }).join('') + '</span>') + '</div>';
+    h += '<div class="id"><h3>' + esc(c.name) + '</h3><div class="chips"><span class="chip"><b>' + c.pl + '</b>' + c.pn + '</span><span class="status">' + c.status + '</span></div></div>';
+    INFO['fp' + ci] = { t: 'From PACs, 2026', p: 'PAC and party contributions to the campaign.', rows: [['From PACs', c.fromPacs, 'As of Oct 15, 2026 · FEC filing 18495' + (70 + ci)]] };
+    INFO['of' + ci] = { t: 'Outside spending supporting, 2026', p: 'Independent expenditures, FEC Schedule E.', rows: [['Supporting ' + c.name.split(' ')[0], c.outFor, 'As of Nov 1, 2026 · Schedule E'], ['Opposing ' + c.name.split(' ')[0], c.outAgainst, 'As of Nov 1, 2026 · Schedule E']] };
+    h += '<dl class="figs"><div><dt>From PACs, 2026 ' + info('fp' + ci, 'From PACs') + '</dt><dd>' + usd(c.fromPacs) + '</dd></div>';
+    h += '<div><dt>Outside spending for ' + info('of' + ci, 'Outside spending') + '</dt><dd>' + usd(c.outFor) + '</dd></div></dl>';
+    h += '<div class="lenses"><div class="lenses-head">PAC support by issue</div>';
+    Object.keys(MEASURES).forEach(function (k) {
+      var m = MEASURES[k], l = c.lenses[k];
+      INFO['m' + ci + k] = { t: m.bill + ', ' + m.title, p: c.name + ': ' + l.rec.toLowerCase() + '. Source: ' + l.recSrc + '.' };
+      h += '<section class="lens"><div class="lens-top"><span class="lens-name">' + m.lens + info('m' + ci + k, m.lens) + '</span><span class="rec' + (l.rec === 'No position' ? ' none' : '') + '">' + l.rec + '</span></div>';
+      h += '<div class="measure">' + m.bill + ' · ' + m.title + '</div>';
+      h += '<div class="sides"><div class="side for"><span class="sl"><svg aria-hidden="true"><use href="#yes"/></svg>In favor</span><div class="ag">' + group(l.for, ci, k, 'for') + '</div></div>';
+      h += '<div class="side against"><span class="sl"><svg aria-hidden="true"><use href="#no"/></svg>Opposed</span><div class="ag">' + group(l.against, ci, k, 'against') + '</div></div></div></section>';
+    });
+    h += '</div>';
+    h += '<div class="card-foot"><a href="#top">Full record</a></div></article>';
+    return h;
+  }
+  $('#cards').innerHTML = CANDS.map(card).join('');
+
+  // Popover
+  var pop = $('#pop'), anchor = null, pinned = false, hideT = null;
+  var hoverable = window.matchMedia && matchMedia('(hover: hover)').matches;
+  function rows(r) { return '<dl>' + r.map(function (x) { return '<div><dt>' + esc(x[0]) + '</dt><dd>' + (typeof x[1] === 'number' ? usd(x[1]) : esc(x[1])) + '</dd><span class="stamp">' + esc(x[2]) + '</span></div>'; }).join('') + '</dl>'; }
+  function content(el) {
+    if (el.dataset.info) {
+      var d = INFO[el.dataset.info];
+      return '<h5>' + esc(d.t) + '</h5><p>' + esc(d.p) + '</p>' + (d.rows ? rows(d.rows) : '') + '';
+    }
+    var k = el.dataset.pac.split('|'), c = CANDS[+k[0]], m = MEASURES[k[1]], g = c.lenses[k[1]][k[2]][+k[3]];
+    var r = [['Direct contribution', g[1], 'As of Oct 15, 2026 · FEC filing 1849' + (200 + +k[3] * 7)]];
+    if (g[2]) r.push(['Outside spending supporting ' + c.name.split(' ')[0], g[2], 'As of Nov 1, 2026 · Schedule E']);
+    if (g[3]) r.push(['Outside spending opposing ' + c.name.split(' ')[0], g[3], 'As of Nov 1, 2026 · Schedule E']);
+    return '<h5>' + esc(PACS[g[0]]) + '</h5><p>' + (k[2] === 'for' ? 'Supports ' : 'Opposes ') + m.bill + '. Source: 2025 scorecard, item 4.</p>' + rows(r);
+  }
+  function place(el) {
+    var r = el.getBoundingClientRect(), pw = pop.offsetWidth, ph = pop.offsetHeight;
+    var left = r.left + window.scrollX + r.width / 2 - pw / 2;
+    left = Math.max(window.scrollX + 16, Math.min(left, window.scrollX + document.documentElement.clientWidth - pw - 16));
+    var top = r.bottom + window.scrollY + 8;
+    if (r.bottom + ph + 16 > window.innerHeight && r.top > ph + 16) top = r.top + window.scrollY - ph - 8;
+    pop.style.left = left + 'px'; pop.style.top = top + 'px';
+  }
+  function show(el, pin) {
+    clearTimeout(hideT);
+    if (anchor && anchor !== el) anchor.setAttribute('aria-expanded', 'false');
+    anchor = el; pinned = pin;
+    pop.innerHTML = content(el); pop.hidden = false; place(el);
+    el.setAttribute('aria-expanded', 'true');
+  }
+  function hide() { if (anchor) anchor.setAttribute('aria-expanded', 'false'); anchor = null; pinned = false; pop.hidden = true; }
+  document.addEventListener('click', function (e) {
+    var el = e.target.closest('[data-pac],[data-info]');
+    if (el) { e.preventDefault(); if (anchor === el && pinned) hide(); else show(el, true); return; }
+    if (!e.target.closest('#pop')) hide();
+  });
+  if (hoverable) {
+    document.addEventListener('mouseover', function (e) {
+      var el = e.target.closest('[data-pac],[data-info]');
+      if (el && !pinned) show(el, false);
+      if (e.target.closest('#pop')) clearTimeout(hideT);
+    });
+    document.addEventListener('mouseout', function (e) {
+      if (pinned) return;
+      if (e.target.closest('[data-pac],[data-info],#pop')) { clearTimeout(hideT); hideT = setTimeout(hide, 180); }
+    });
+  }
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && anchor) { var a = anchor; hide(); a.focus(); } });
+  window.addEventListener('resize', function () { if (anchor) place(anchor); });
+
+  // Picker
+  var MAIN = ['Money in politics', 'Health care costs', 'Cost of living', 'Housing & homelessness', 'Government ethics', 'Budget & taxes', 'Immigration & border', 'Drug addiction', 'Gun policy', 'Crime & public safety', 'Climate & energy', 'Jobs & wages'];
+  var MORE = ['Civil rights & LGBTQ equality', 'Foreign policy & defense', 'Israel', 'Education', 'Social Security & Medicare', 'Abortion'];
+  var sel = MAIN.slice(0, 3);
+  function opts(list, ranked) { return list.map(function (n, i) { return '<button class="opt" data-opt="' + esc(n) + '" aria-pressed="' + (sel.indexOf(n) > -1) + '">' + (ranked ? '<span class="rank">' + (i + 1) + '</span>' : '') + esc(n) + '</button>'; }).join(''); }
+  function drawPicker() {
+    $('#opts-main').innerHTML = opts(MAIN, true); $('#opts-more').innerHTML = opts(MORE, false);
+    $('#pk-count').textContent = sel.length + ' of 3 selected';
+  }
+  drawPicker();
+  $('#picker-panel').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-opt]'); if (!b) return;
+    var n = b.dataset.opt, i = sel.indexOf(n);
+    if (i > -1) sel.splice(i, 1); else if (sel.length < 3) sel.push(n);
+    drawPicker();
+  });
+  $('#pk-skip').addEventListener('click', function () { sel = MAIN.slice(0, 3); drawPicker(); });
+  $('#pk-save').addEventListener('click', function () { $('#issuebar') ; $('#cards').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+  $('#edit-issues').addEventListener('click', function () { $('#picker-panel').scrollIntoView({ behavior: 'smooth', block: 'start' }); });
+})();
+</script>
+
+</html>

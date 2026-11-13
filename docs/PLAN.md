@@ -71,9 +71,14 @@ Next tier: civil rights & LGBTQ equality · foreign policy & defense (incl. Isra
 
 - Classic layout: sidebar nav + global header with search.
 - Search returns grouped results (people, donors, bills, committees) and detects zip codes and addresses.
-- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades · Methodology · Coverage · Corrections
+- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades. Collapsible to icons on desktop.
+- Footer: Methodology · Coverage · Corrections.
+- Admin sign-in only at the `/admin` route; nothing links to it from the reader UI.
 - Every view's state lives in the URL (shareable permalinks instead of saved searches).
-- Component library and design system: **TBD (Jaiden decides before coding UI).**
+- Component library: **Nuxt UI + Tailwind CSS.**
+- Design system: see [`docs/design/DESIGN.md`](design/DESIGN.md) and [`docs/design/tokens.css`](design/tokens.css).
+- Readers pick up to 3 issue lenses on first visit (skip = top 3 by Pew rank). Saved in the URL and browser.
+- Race page cards show PAC support by issue: PACs in favor of and opposed to one bill per issue, next to the candidate's record on it.
 
 ### Feature list
 - Rep page reorganized by the user's chosen issue lenses
@@ -127,7 +132,8 @@ Not available: OpenSecrets API (registrations closed April 2025), ProPublica Con
 
 ## Open items
 
-- Component library + design system
+- Rule for choosing the bill each issue row on a card is anchored to
+- Sign-in scope: admins only, or also email-verified contributors (affects tag proposals, voting)
 - Donor-name threshold (dollar amount)
 - Tag max age for the rolling re-check sweep
 - Monthly AI spend cap
