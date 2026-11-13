@@ -47,6 +47,10 @@
   --pt-radius: 10px;
   --pt-shadow: 0 8px 28px rgba(20, 24, 32, 0.14);
 
+  /* Motion (DESIGN.md, Motion). Durations are 0 under prefers-reduced-motion: reduce. */
+  --pt-duration-motion: 0.3s;  /* position or size changes, and fades that go with them */
+  --pt-duration-fade: 0.2s;    /* color, background, border, opacity on their own */
+
   /* Nuxt UI semantic mapping */
   --ui-primary: var(--pt-ink);
   --ui-secondary: var(--pt-brass);
@@ -56,6 +60,13 @@
   --ui-info: var(--pt-ink-2);
   --ui-bg: var(--pt-paper);
   --ui-text: var(--pt-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --pt-duration-motion: 0s;
+    --pt-duration-fade: 0s;
+  }
 }
 
 .dark {

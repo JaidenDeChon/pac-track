@@ -186,7 +186,7 @@ h2 { font-family: var(--f-head); font-weight: 800; letter-spacing: -0.02em; font
 
 footer { padding-block: 32px 48px; color: var(--ink-3); font-size: 12px; border-top: 1px solid var(--rule); }
 @media (max-width: 420px) { .photo .initials { font-size: 72px; } }
-@media (prefers-reduced-motion: no-preference) { .av, .opt, .seg button { transition: background-color .15s, color .15s; } }
+@media (prefers-reduced-motion: no-preference) { .av, .opt, .seg button { transition: background-color .2s, color .2s; } }
 /* Shell: full-width header + star band; sidebar column + content column. Sidebar becomes a drawer under 960px. */
 .site-head .wrap { max-width: none; flex-wrap: nowrap; gap: 12px; padding-block: 10px; }
 .mark { flex: none; }
@@ -267,15 +267,15 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 @media (max-width: 959px) { .side-nav button.nav-link { display: none; } }
 
 /* Search hide/show: animated, never changes the header's height, so the page never moves. */
-.search { transition: opacity .2s ease, transform .2s ease, visibility 0s; }
-.site-head.scrolled:not(.search-open) .search { opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none; transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s; }
+.search { transition: opacity .3s ease, transform .3s ease, visibility 0s; }
+.site-head.scrolled:not(.search-open) .search { opacity: 0; visibility: hidden; transform: translateY(-6px); pointer-events: none; transition: opacity .3s ease, transform .3s ease, visibility 0s linear .3s; }
 @media (max-width: 640px) {
   :root { --sr-h: 51px; } /* search row: 40px field + 10px bottom padding + 1px border */
   .site-head .wrap { flex-wrap: nowrap; }
   /* The search row hangs below the bar, out of flow. A fixed spacer at the top of the page holds its place. */
-  .search { position: absolute; left: 0; right: 0; top: 100%; margin: 0; max-width: none; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--surface); border-bottom: 1px solid var(--rule); clip-path: inset(0 0 -100vh 0); transition: transform .25s ease, clip-path .25s ease, opacity .25s ease, visibility 0s; }
+  .search { position: absolute; left: 0; right: 0; top: 100%; margin: 0; max-width: none; padding: 0 max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); background: var(--surface); border-bottom: 1px solid var(--rule); clip-path: inset(0 0 -100vh 0); transition: transform .3s ease, clip-path .3s ease, opacity .3s ease, visibility 0s; }
   /* Slides up behind the bar: the clip moves down as fast as the row moves up, so it never covers the bar. */
-  .site-head.scrolled:not(.search-open) .search { transform: translateY(-100%); clip-path: inset(100% 0 -100vh 0); opacity: 0; transition: transform .25s ease, clip-path .25s ease, opacity .25s ease, visibility 0s linear .25s; }
+  .site-head.scrolled:not(.search-open) .search { transform: translateY(-100%); clip-path: inset(100% 0 -100vh 0); opacity: 0; transition: transform .3s ease, clip-path .3s ease, opacity .3s ease, visibility 0s linear .3s; }
   .results { left: max(16px, env(safe-area-inset-left, 0px)); right: max(16px, env(safe-area-inset-right, 0px)); top: calc(100% - 2px); }
   .shell { padding-top: var(--sr-h); }
 }

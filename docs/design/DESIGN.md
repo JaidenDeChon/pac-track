@@ -30,6 +30,13 @@ Numbers use `tabular-nums`.
 - Header: surface background with a hairline bottom border, and a brass star mark beside the wordmark.
 - Focus ring: 3px brass, offset 2px.
 
+## Motion
+
+- **Movement takes 0.3s.** Anything that changes position or size: slides, drawers, rows that move in or out.
+- **Everything else takes 0.2s.** Color, background, border and opacity changes on their own, such as hover and pressed states.
+- A fade or color change that goes with a movement uses the movement's 0.3s, so they finish together (for example, the backdrop behind the drawer).
+- Respect Reduce Motion: with it on, nothing moves or fades; changes are instant.
+
 ## Color roles
 
 Each color has one job. Party color never doubles as interface or status color.
