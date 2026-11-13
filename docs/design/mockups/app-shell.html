@@ -245,7 +245,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 /* The closed drawer stays painted just off screen (made inert in script), so opening starts on the first frame with nothing to draw. */
 :root { --drawer-t: .3s; --ease-drawer: ease-in-out; }
 .scrim { will-change: opacity; }
-@media (max-width: 959px) {
+@media (max-width: 959px) and (prefers-reduced-motion: no-preference) {
   .side-nav { transition: transform var(--drawer-t) var(--ease-drawer); }
   .scrim { transition: opacity var(--drawer-t) var(--ease-drawer), visibility 0s linear var(--drawer-t); }
   .scrim.open { transition: opacity var(--drawer-t) var(--ease-drawer), visibility 0s; }
