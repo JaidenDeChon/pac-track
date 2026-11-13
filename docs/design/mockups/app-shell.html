@@ -243,12 +243,12 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 }
 /* Drawer and scrim open and close together, over 0.2s. Opening decelerates into place; closing eases out gently. */
 /* The closed drawer stays painted just off screen (made inert in script), so opening starts on the first frame with nothing to draw. */
-:root { --ease-drawer: cubic-bezier(.32, .72, 0, 1); }
+:root { --drawer-t: .3s; --ease-drawer: ease-in-out; }
 .scrim { will-change: opacity; }
-@media (prefers-reduced-motion: no-preference) {
-  .side-nav { transition: transform .2s var(--ease-drawer); }
-  .scrim { transition: opacity .2s var(--ease-drawer), visibility 0s linear .2s; }
-  .scrim.open { transition: opacity .2s var(--ease-drawer), visibility 0s; }
+@media (max-width: 959px) {
+  .side-nav { transition: transform var(--drawer-t) var(--ease-drawer); }
+  .scrim { transition: opacity var(--drawer-t) var(--ease-drawer), visibility 0s linear var(--drawer-t); }
+  .scrim.open { transition: opacity var(--drawer-t) var(--ease-drawer), visibility 0s; }
 }
 .search-btn { display: none; }
 .site-head.scrolled:not(.search-open) .search-btn { display: inline-grid; }
@@ -594,7 +594,7 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   if (drawerMq.addEventListener) drawerMq.addEventListener('change', syncInert);
   syncInert();
   // Focus moves only after the slide finishes, so it can't nudge the drawer or the page mid-animation.
-  function afterSlide(fn) { var done = false; function go() { if (!done) { done = true; nav.removeEventListener('transitionend', go); fn(); } } nav.addEventListener('transitionend', go); setTimeout(go, 260); }
+  function afterSlide(fn) { var done = false; function go() { if (!done) { done = true; nav.removeEventListener('transitionend', go); fn(); } } nav.addEventListener('transitionend', go); setTimeout(go, 360); }
   function openNav() { nav.classList.add('open'); scrim.classList.add('open'); mb.setAttribute('aria-expanded', 'true'); syncInert(); afterSlide(function () { if (nav.classList.contains('open')) $('#nav-close').focus({ preventScroll: true }); }); }
   function closeNav() { if (!nav.classList.contains('open')) return; nav.classList.remove('open'); scrim.classList.remove('open'); mb.setAttribute('aria-expanded', 'false'); syncInert(); mb.focus({ preventScroll: true }); }
   mb.addEventListener('click', openNav);
