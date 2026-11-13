@@ -87,6 +87,16 @@ Used on race pages, side by side. Order from top to bottom:
 
 **PAC avatars:** inverse of the page theme (ink circle, paper initials) for contrast against the tints. Up to 4, then `+N`. Hover or tap opens a popover with the PAC's name, its documented position and source, its direct contribution, and its outside spending for or against the candidate. Each amount has its own data date and filing ID. A brass ring marks the open or hovered avatar. Initials by default; logos only where we have rights to use them.
 
+## Official record page
+
+Mockup: [`mockups/official-record.html`](mockups/official-record.html). Opened from "Full record" on a race card. Top to bottom:
+
+1. **Profile header**: square portrait (initials if none) with the party line, office as an eyebrow, name in the display face, party chip and status pills. Below: a **2026 / Career** switch that applies to the whole page, and icon buttons for Compare, Share, Download CSV and RSS.
+2. **Figures strip**, five separate amounts, never added together: From PACs, From individuals, Via conduits, Outside spending for, Outside spending against. Each has an ⓘ popover with its source and data stamp.
+3. **Your issues**: one block per chosen issue, one row per bill with a recorded action. Each row shows the bill, the record tag and date (ⓘ holds the source and the stamps for both totals), and the In favor and Opposed boxes from the race card, each with the total of direct contributions from those PACs.
+4. **Timeline**: bars of PAC contributions (monthly for 2026, quarterly for Career) over a lane of the official's actions on bills in the reader's issues (✓ for, ✕ against). Hovering or tapping a bar shows the amount and its stamp. Hovering or tapping an action shows the bill, the source, and contributions from PACs on each side in the 90 days before, with the gap in days. Markers that would touch stack into a second row.
+5. **Top donors**: PACs, Employers (individual contributions grouped by reported employer) or Outside spending (with a Supporting or Opposing tag). Each row has an inverse avatar, a bar scaled to the top row and the amount. An "All…" row links to the full list.
+
 ## Issue picker
 
 - Shown on a reader's first visit, before the first race or official page.
