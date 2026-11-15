@@ -321,10 +321,26 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 .issues { display: grid; gap: 12px; }
 .issue { background: var(--surface); border: 1px solid var(--rule); border-radius: var(--radius); overflow: hidden; }
 .issue-head { display: flex; align-items: center; gap: 2px; padding: 12px 16px; border-bottom: 1px solid var(--rule); font: 700 15px var(--f-body); }
-.bill { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr); gap: 10px 24px; align-items: center; padding: 14px 16px; }
-.bill + .bill { border-top: 1px solid var(--rule); }
-.bill-t { font: 600 14px/1.35 var(--f-body); }
-.bill-m { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 6px; font-size: 13px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.issue-head .count { margin-left: auto; margin-right: 6px; font: 500 12px var(--f-body); color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.issue-head .iconbtn.sm { width: 30px; height: 30px; }
+.issue-head .iconbtn.sm svg { width: 16px; height: 16px; }
+.issue-head .iconbtn:disabled { opacity: .35; cursor: default; }
+.slides { position: relative; display: flex; gap: 12px; overflow-x: auto; scroll-snap-type: x mandatory; scroll-padding-inline: 16px; padding: 16px; overscroll-behavior-x: contain; scrollbar-width: none; }
+.slides::-webkit-scrollbar { display: none; }
+.slides::after { content: ""; flex: 0 0 4px; }
+.slide { flex: 0 0 min(480px, calc(100% - 36px)); scroll-snap-align: start; display: flex; flex-direction: column; gap: 12px; padding: 14px; border: 1px solid var(--rule); border-radius: var(--radius); background: var(--surface); min-width: 0; }
+.s-meta { display: flex; align-items: center; gap: 4px 8px; flex-wrap: wrap; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.s-meta b { font-weight: 600; color: var(--ink-2); }
+.s-meta .info { margin-left: auto; }
+.s-sum { margin: 0; font: 600 16px/1.45 var(--f-body); letter-spacing: -0.005em; text-wrap: pretty; }
+.s-sum .rec { vertical-align: 1px; margin-right: 2px; }
+.s-trade { margin: -4px 0 0; font-size: 14px; line-height: 1.45; color: var(--ink-2); text-wrap: pretty; }
+.slide .sides { margin-top: auto; }
+.slide .sl { flex-wrap: wrap; row-gap: 2px; white-space: nowrap; }
+.dots { display: flex; justify-content: center; gap: 6px; padding: 0 16px 14px; }
+.dot { width: 6px; height: 6px; padding: 0; border: 0; border-radius: 999px; background: var(--rule); cursor: pointer; }
+.dot[aria-current="true"] { width: 18px; background: var(--ink); }
+@media (prefers-reduced-motion: no-preference) { .dot { transition: width .3s ease-in-out, background-color .3s ease-in-out; } }
 .rec.for, .rec.against { border-color: transparent; display: inline-flex; align-items: center; gap: 4px; padding-left: 4px; }
 .rec.for { background: var(--success-tint); }
 .rec.against { background: var(--critical-tint); }
@@ -377,7 +393,6 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
 .dn-all:hover { background: var(--surface-2); }
 .dn-all svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
-@media (max-width: 720px) { .bill { grid-template-columns: minmax(0, 1fr); } }
 @media (max-width: 640px) {
   .rec-hero { grid-template-columns: 96px minmax(0, 1fr); gap: 16px; align-items: center; padding-block: 20px 16px; }
   .rec-hero .rec-top { grid-column: 1 / -1; }
@@ -424,6 +439,8 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
     <symbol id="n-share" viewBox="0 0 24 24"><path d="M12 15V3M8 7l4-4 4 4M5 12v8h14v-8"/></symbol>
     <symbol id="n-download" viewBox="0 0 24 24"><path d="M12 3v12M8 11l4 4 4-4M5 20h14"/></symbol>
     <symbol id="n-rss" viewBox="0 0 24 24"><path d="M5 5a14 14 0 0 1 14 14M5 11a8 8 0 0 1 8 8"/><circle cx="6" cy="18" r="1.4"/></symbol>
+    <symbol id="n-prev" viewBox="0 0 24 24"><path d="M15 6l-6 6 6 6"/></symbol>
+    <symbol id="n-next" viewBox="0 0 24 24"><path d="M9 6l6 6-6 6"/></symbol>
     <symbol id="n-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
   </defs>
 </svg>
@@ -569,18 +586,40 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   }
   function total(s) { return s.reduce(function (a, b) { return a + b.v; }, 0); }
 
+  // act: what the bill would do (condensed from the CRS summary). trade: its cost or what it requires (CBO estimate or bill text).
   var ISSUES = [
     { name: 'Money in politics', bills: [
-      { id: 'H.R. 0001', title: 'Example Disclosure Act', rec: 'Voted for', d: [2026, 3, 4], src: 'Roll call 88', for: [['tf', 5000, 0, 0], ['cr', 5000, 42000, 0], ['vb', 2500, 0, 0]], against: [] },
-      { id: 'H.R. 0104', title: 'Example Donor Limits Act', rec: 'Voted against', d: [2025, 9, 17], src: 'Roll call 301', for: [['tf', 2500, 0, 0]], against: [['fs', 5000, 0, 0], ['bp', 5000, 0, 0]] }
+      { id: 'H.R. 0001', title: 'Example Disclosure Act', rec: 'Voted for', d: [2026, 3, 4], src: 'Roll call 88',
+        act: 'requiring groups that spend over $10,000 on elections to name donors who gave $1,000 or more.', trade: 'Costs $28 million over 5 years for FEC enforcement, per CBO.',
+        for: [['tf', 5000, 0, 0], ['cr', 5000, 42000, 0], ['vb', 2500, 0, 0]], against: [['fs', 2500, 0, 0]] },
+      { id: 'H.R. 0104', title: 'Example Donor Limits Act', rec: 'Voted against', d: [2025, 9, 17], src: 'Roll call 301',
+        act: 'lowering the PAC contribution limit from $5,000 to $2,500 per election.', trade: 'Funded by a new $250 yearly filing fee on each PAC.',
+        for: [['tf', 2500, 0, 0]], against: [['fs', 5000, 0, 0], ['bp', 5000, 0, 0]] },
+      { id: 'H.R. 0107', title: 'Example Small Donor Match Act', rec: 'Voted for', d: [2025, 4, 9], src: 'Roll call 97',
+        act: 'matching donations of $200 or less to House candidates at 6 to 1.', trade: 'Costs $2.1 billion over 10 years, paid by a surcharge on corporate fines, per CBO.',
+        for: [['cr', 2500, 0, 0], ['vb', 1000, 0, 0]], against: [['bp', 5000, 0, 0]] }
     ] },
     { name: 'Health care costs', bills: [
-      { id: 'H.R. 0002', title: 'Example Drug Pricing Act', rec: 'Voted for', d: [2026, 6, 12], src: 'Roll call 214', for: [['ph', 5000, 0, 0], ['nu', 10000, 120000, 0], ['sc', 2500, 0, 0]], against: [['rx', 2000, 0, 0]] },
-      { id: 'H.R. 0105', title: 'Example Insulin Cap Act', rec: 'Voted for', d: [2025, 11, 20], src: 'Roll call 402', for: [['ph', 2500, 0, 0], ['sc', 1000, 0, 0]], against: [['rx', 2000, 0, 0], ['ih', 1000, 0, 0]] }
+      { id: 'H.R. 0002', title: 'Example Drug Pricing Act', rec: 'Voted for', d: [2026, 6, 12], src: 'Roll call 214',
+        act: 'letting Medicare negotiate prices for 50 more drugs a year.', trade: 'Saves $96 billion over 10 years; CBO projects 4 fewer new drugs over 30 years.',
+        for: [['ph', 5000, 0, 0], ['nu', 10000, 120000, 0], ['sc', 2500, 0, 0]], against: [['rx', 2000, 0, 0]] },
+      { id: 'H.R. 0105', title: 'Example Insulin Cap Act', rec: 'Voted for', d: [2025, 11, 20], src: 'Roll call 402',
+        act: 'capping insulin copays at $35 a month in private plans.', trade: 'Raises premiums by $1.4 billion over 10 years, per CBO.',
+        for: [['ph', 2500, 0, 0], ['sc', 1000, 0, 0]], against: [['rx', 2000, 0, 0], ['ih', 1000, 0, 0]] },
+      { id: 'H.R. 0108', title: 'Example Hospital Prices Act', rec: 'Voted against', d: [2025, 2, 26], src: 'Roll call 41',
+        act: 'requiring hospitals to post cash prices for 300 common services.', trade: 'Fines hospitals that don\u2019t comply up to $2 million a year.',
+        for: [['ph', 1000, 0, 0]], against: [['ih', 2500, 0, 0]] }
     ] },
     { name: 'Cost of living', bills: [
-      { id: 'H.R. 0003', title: 'Example Housing Supply Act', rec: 'Cosponsor', d: [2026, 2, 2], src: 'congress.gov cosponsor list', for: [['hb', 5000, 0, 0], ['rt', 5000, 0, 0], ['wk', 10000, 64000, 0], ['bk', 1000, 0, 0], ['sc', 1000, 0, 0]], against: [] },
-      { id: 'H.R. 0106', title: 'Example Rent Data Act', rec: 'Voted against', d: [2026, 7, 22], src: 'Roll call 255', for: [['rt', 5000, 0, 0], ['wk', 2500, 0, 0]], against: [['lr', 2500, 0, 0], ['bk', 1000, 0, 0]] }
+      { id: 'H.R. 0003', title: 'Example Housing Supply Act', rec: 'Cosponsor', d: [2026, 2, 2], src: 'congress.gov cosponsor list',
+        act: 'giving grants to cities that loosen zoning limits on apartments.', trade: 'Costs $8 billion over 10 years, per CBO.',
+        for: [['hb', 5000, 0, 0], ['rt', 5000, 0, 0], ['wk', 10000, 64000, 0], ['bk', 1000, 0, 0], ['sc', 1000, 0, 0]], against: [] },
+      { id: 'H.R. 0106', title: 'Example Rent Data Act', rec: 'Voted against', d: [2026, 7, 22], src: 'Roll call 255',
+        act: 'creating a national database of rents.', trade: 'Requires landlords with 5 or more units to report rents each year.',
+        for: [['rt', 5000, 0, 0], ['wk', 2500, 0, 0]], against: [['lr', 2500, 0, 0], ['bk', 1000, 0, 0]] },
+      { id: 'H.R. 0109', title: 'Example Gas Tax Holiday Act', rec: 'Voted against', d: [2025, 6, 5], src: 'Roll call 152',
+        act: 'suspending the 18.4-cent federal gas tax for 6 months.', trade: 'Cuts Highway Trust Fund revenue by $20 billion, per CBO.',
+        for: [['wk', 1000, 0, 0]], against: [['rt', 1000, 0, 0]] }
     ] }
   ];
   function side(rec) { return /^(Voted for|Cosponsor|Supports)$/.test(rec) ? 'for' : 'against'; }
@@ -620,17 +659,48 @@ kbd { font: 500 11px var(--f-mono); color: var(--ink-3); border: 1px solid var(-
   }
   function stanceTag(s, label) { return '<span class="rec ' + s + '"><svg aria-hidden="true"><use href="#' + (s === 'for' ? 'yes' : 'no') + '"/></svg>' + label + '</span>'; }
   function recTag(rec) { return stanceTag(side(rec), rec); }
+  var VERB = { 'Voted for': 'Voted for', 'Voted against': 'Voted against', 'Cosponsor': 'Cosponsored' };
   function renderIssues() {
     $('#issues').innerHTML = ISSUES.map(function (is, ii) {
-      INFO['is' + ii] = { t: is.name, p: 'Bills with a recorded action by ' + FIRST + '. Amounts are direct contributions from PACs with a documented position on each bill.' };
-      return '<article class="issue"><div class="issue-head">' + esc(is.name) + info('is' + ii, is.name) + '</div>' + is.bills.map(function (b, bi) {
-        var tf = sum(b.for), ta = sum(b.against);
-        INFO['b' + ii + bi] = { t: b.id + ', ' + b.title, p: NAME + ': ' + b.rec.toLowerCase() + '. Source: ' + b.src + ', ' + fmtDate(b.d) + '.', rows: [['From PACs in favor', tf, stamp('FEC filings 1849204–1849588')], ['From PACs opposed', ta, stamp('FEC filings 1849204–1849588')]] };
-        return '<div class="bill"><div><div class="bill-t">' + b.id + ' · ' + esc(b.title) + '</div><div class="bill-m">' + recTag(b.rec) + '<span>' + fmtDate(b.d) + '</span>' + info('b' + ii + bi, b.id) + '</div></div>'
-          + '<div class="sides"><div class="side for"><span class="sl"><svg aria-hidden="true"><use href="#yes"/></svg>In favor<span class="amt">' + (b.for.length ? usd(tf) : '') + '</span></span><div class="ag">' + avatars(b.for, bi, ii, 'for') + '</div></div>'
-          + '<div class="side against"><span class="sl"><svg aria-hidden="true"><use href="#no"/></svg>Opposed<span class="amt">' + (b.against.length ? usd(ta) : '') + '</span></span><div class="ag">' + avatars(b.against, bi, ii, 'against') + '</div></div></div></div>';
-      }).join('') + '</article>';
+      var n = is.bills.length;
+      INFO['is' + ii] = { t: is.name, p: 'Bills with a recorded action by ' + FIRST + ', newest first. Amounts are direct contributions from PACs with a documented position on each bill.' };
+      var bills = is.bills.slice().sort(function (a, b) { return Date.UTC(b.d[0], b.d[1], b.d[2]) - Date.UTC(a.d[0], a.d[1], a.d[2]); });
+      return '<article class="issue" data-issue="' + ii + '"><div class="issue-head">' + esc(is.name) + info('is' + ii, is.name)
+        + '<span class="count">' + n + ' bills</span>'
+        + '<button class="iconbtn sm" data-go="-1" aria-label="Previous bill" disabled><svg><use href="#n-prev"/></svg></button>'
+        + '<button class="iconbtn sm" data-go="1" aria-label="Next bill"><svg><use href="#n-next"/></svg></button></div>'
+        + '<div class="slides" tabindex="0" aria-label="' + esc(is.name) + ' bills">' + bills.map(function (b, k) {
+          var bi = is.bills.indexOf(b), tf = sum(b.for), ta = sum(b.against);
+          INFO['b' + ii + bi] = { t: b.id + ', ' + b.title, p: 'Summary written from the Congressional Research Service bill summary and the CBO cost estimate. Reviewed Oct 2, 2026.',
+            rows: [['Record', VERB[b.rec], b.src + ', ' + fmtDate(b.d)], ['From PACs in favor', tf, stamp('FEC filings 1849204–1849588')], ['From PACs opposed', ta, stamp('FEC filings 1849204–1849588')]] };
+          return '<div class="slide" role="group" aria-roledescription="slide" aria-label="' + (k + 1) + ' of ' + n + '">'
+            + '<div class="s-meta"><b>' + b.id + '</b><span>' + esc(b.title) + '</span><span>· ' + fmtDate(b.d) + '</span>' + info('b' + ii + bi, b.id) + '</div>'
+            + '<p class="s-sum">' + stanceTag(side(b.rec), VERB[b.rec]) + ' ' + esc(b.act) + '</p>'
+            + '<p class="s-trade">' + esc(b.trade) + '</p>'
+            + '<div class="sides"><div class="side for"><span class="sl"><svg aria-hidden="true"><use href="#yes"/></svg>In favor<span class="amt">' + (b.for.length ? usd(tf) : '') + '</span></span><div class="ag">' + avatars(b.for, bi, ii, 'for') + '</div></div>'
+            + '<div class="side against"><span class="sl"><svg aria-hidden="true"><use href="#no"/></svg>Opposed<span class="amt">' + (b.against.length ? usd(ta) : '') + '</span></span><div class="ag">' + avatars(b.against, bi, ii, 'against') + '</div></div></div></div>';
+        }).join('') + '</div>'
+        + '<div class="dots" role="group" aria-label="Choose bill">' + bills.map(function (b, k) { return '<button class="dot" data-dot="' + k + '" aria-label="Bill ' + (k + 1) + ' of ' + n + '"' + (k === 0 ? ' aria-current="true"' : '') + '></button>'; }).join('') + '</div></article>';
     }).join('');
+    document.querySelectorAll('.issue').forEach(initSlides);
+  }
+  var reduceMotion = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)');
+  function initSlides(issue) {
+    var track = issue.querySelector('.slides'), slides = issue.querySelectorAll('.slide'), dots = issue.querySelectorAll('.dot'), prev = issue.querySelector('[data-go="-1"]'), next = issue.querySelector('[data-go="1"]'), raf = 0;
+    function current() { var x = track.scrollLeft, best = 0; slides.forEach(function (sl, k) { if (Math.abs(sl.offsetLeft - 16 - x) < Math.abs(slides[best].offsetLeft - 16 - x)) best = k; }); return best; }
+    function sync() {
+      raf = 0; var c = current(), end = track.scrollLeft + track.clientWidth >= track.scrollWidth - 4;
+      if (end) c = slides.length - 1;
+      dots.forEach(function (d, k) { if (k === c) d.setAttribute('aria-current', 'true'); else d.removeAttribute('aria-current'); });
+      prev.disabled = track.scrollLeft <= 4; next.disabled = end;
+    }
+    function go(k) { k = Math.max(0, Math.min(slides.length - 1, k)); track.scrollTo({ left: slides[k].offsetLeft - 16, behavior: reduceMotion && reduceMotion.matches ? 'auto' : 'smooth' }); }
+    track.addEventListener('scroll', function () { if (!raf) raf = requestAnimationFrame(sync); }, { passive: true });
+    prev.addEventListener('click', function () { go(current() - 1); });
+    next.addEventListener('click', function () { go(current() + 1); });
+    dots.forEach(function (d, k) { d.addEventListener('click', function () { go(k); }); });
+    track.addEventListener('keydown', function (e) { if (e.target !== track) return; if (e.key === 'ArrowRight') { e.preventDefault(); go(current() + 1); } if (e.key === 'ArrowLeft') { e.preventDefault(); go(current() - 1); } });
+    sync();
   }
 
   var EVENTS = [];

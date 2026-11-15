@@ -93,7 +93,11 @@ Mockup: [`mockups/official-record.html`](mockups/official-record.html). Opened f
 
 1. **Profile header**: square portrait (initials if none) with the party line, office as an eyebrow, name in the display face, party chip and status pills. Below: a **2026 / Career** switch that applies to the whole page, and icon buttons for Compare, Share, Download CSV and RSS.
 2. **Figures strip**, five separate amounts, never added together: From PACs, From individuals, Via conduits, Outside spending for, Outside spending against. Each has an ⓘ popover with its source and data stamp.
-3. **Your issues**: one block per chosen issue, one row per bill with a recorded action. Each row shows the bill, the record tag and date (ⓘ holds the source and the stamps for both totals), and the In favor and Opposed boxes from the race card, each with the total of direct contributions from those PACs.
+3. **Your issues**: one block per chosen issue. Its bills, newest first, are a horizontal row of slides that snap into place. Prev/next buttons and a bill count sit in the block's header, with dots under the row. Swipe, arrow keys or the dots also move between slides. One slide is visible on phones and two on desktop, each with the next one peeking in. Each slide shows:
+   - The bill number, title and date. Its ⓘ holds the record source, where the summary came from and when it was reviewed, and the stamps for both totals.
+   - **Summary line**: the record tag followed by what the bill would do, e.g. "✓ Voted for capping insulin copays at $35 a month in private plans."
+   - **Cost line**: what the bill costs or requires, e.g. "Raises premiums by $1.4 billion over 10 years, per CBO."
+   - The In favor and Opposed boxes from the race card, each with the total of direct contributions from those PACs.
 4. **Timeline**: bars of PAC contributions (monthly for 2026, quarterly for Career) over a lane of the official's actions on bills in the reader's issues (✓ for, ✕ against). Hovering or tapping a bar shows the amount and its stamp. Hovering or tapping an action shows the bill, the source, and contributions from PACs on each side in the 90 days before, with the gap in days. Markers that would touch stack into a second row.
 5. **Top donors**: PACs, Employers (individual contributions grouped by reported employer) or Outside spending (with a Supporting or Opposing tag). Each row has an inverse avatar, a bar scaled to the top row and the amount. An "All…" row links to the full list.
 
@@ -111,6 +115,7 @@ Follow the neutral-copy rules in `CLAUDE.md`. In addition:
 
 - Use the year alone ("2026"), not "2026 cycle".
 - Describe each side by its stance on a specific bill or position, never by a label for the group.
+- Bill summaries say what a bill would do and what it costs or requires, from the CRS summary, the CBO estimate or the bill text. They never state why someone voted a certain way.
 
 ## Open questions
 
