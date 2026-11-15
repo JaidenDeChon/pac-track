@@ -46,6 +46,7 @@ Domain: pac-track.com · Planning whiteboard: https://claude.ai/artifact/EbvKiJ8
 - Individual donor names shown only above a threshold; employer aggregation below it.
 - FEC donor data is never used for solicitation or commercial purposes (52 U.S.C. § 30111(a)(4)), including digests.
 - Tags re-verified continuously: event-triggered (source page change, new filing, new scorecard) plus a rolling sweep with a maximum tag age. Monthly AI spend cap.
+- Bill summaries on record pages: two short lines, what the bill would do and what it costs or requires. Written by an agent from the Congressional Research Service summary, the CBO cost estimate and the bill text, then approved through the same review as tags, with sources archived. No claims about motive.
 - Rebuttals from officials and campaigns: maintainer notified first; approval by the maintainer or an approved reviewer.
 
 ## Issue lenses
@@ -71,9 +72,14 @@ Next tier: civil rights & LGBTQ equality · foreign policy & defense (incl. Isra
 
 - Classic layout: sidebar nav + global header with search.
 - Search returns grouped results (people, donors, bills, committees) and detects zip codes and addresses.
-- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades · Methodology · Coverage · Corrections
+- Sidebar: Officials & Candidates · Races · Donors · Issues · Bills & Votes · Lobbying · Disclosures & Trades. Collapsible to icons on desktop.
+- Footer: Methodology · Coverage · Corrections.
+- Admin sign-in only at the `/admin` route; nothing links to it from the reader UI.
 - Every view's state lives in the URL (shareable permalinks instead of saved searches).
-- Component library and design system: **TBD (Jaiden decides before coding UI).**
+- Component library: **Nuxt UI + Tailwind CSS.**
+- Design system: see [`docs/design/DESIGN.md`](design/DESIGN.md) and [`docs/design/tokens.css`](design/tokens.css).
+- Readers pick up to 3 issue lenses on first visit (skip = top 3 by Pew rank). Saved in the URL and browser.
+- Race page cards show PAC support by issue: PACs in favor of and opposed to one bill per issue, next to the candidate's record on it.
 
 ### Feature list
 - Rep page reorganized by the user's chosen issue lenses
@@ -111,6 +117,7 @@ Merge donor records across sources ("John Smith, Acme" ≈ "J. Smith, ACME Inc")
 |---|---|
 | OpenFEC API + bulk files | Federal money |
 | api.congress.gov | Federal bills & votes |
+| api.congress.gov summaries + CBO cost estimates | Federal bill summaries (CRS) and costs |
 | unitedstates/congress-legislators | Member IDs across sources |
 | Senate LDA | Federal lobbying |
 | See The Money (AZ SOS) | Arizona money |
@@ -127,8 +134,11 @@ Not available: OpenSecrets API (registrations closed April 2025), ProPublica Con
 
 ## Open items
 
-- Component library + design system
+- Rule for choosing the bill each issue row on a card is anchored to
+- Sign-in scope: admins only, or also email-verified contributors (affects tag proposals, voting)
 - Donor-name threshold (dollar amount)
 - Tag max age for the rolling re-check sweep
 - Monthly AI spend cap
 - Reviewer onboarding process
+- State bill summaries: sources per state (legislative staff fact sheets where they exist), and what to show where there are none
+- Whether to show an official's own stated reason for a vote (quoted from the Congressional Record or a press release)

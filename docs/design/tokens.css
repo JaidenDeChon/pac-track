@@ -1,0 +1,98 @@
+/*
+ * pac-track design tokens.
+ * Source of truth for color, type and shape. See DESIGN.md for how each role is used.
+ * Dark mode uses the `.dark` class set by Nuxt color mode.
+ *
+ * Starting point for the app's main.css. When the Nuxt app is set up, check the
+ * `--ui-*` variable names against the installed Nuxt UI version.
+ */
+
+:root {
+  /* Neutrals */
+  --pt-paper: #F5F6F8;      /* page background */
+  --pt-surface: #FFFFFF;    /* cards, header, popovers */
+  --pt-surface-2: #ECEEF2;  /* insets, pills */
+  --pt-ink: #141820;        /* text, primary actions */
+  --pt-ink-2: #485060;      /* secondary text */
+  --pt-ink-3: #697184;      /* tertiary text, labels */
+  --pt-rule: #D8DCE4;       /* borders and dividers */
+
+  /* Accent */
+  --pt-brass: #A47418;      /* focus ring, star mark */
+
+  /* Party: equal lightness for D and R */
+  --pt-dem: oklch(0.50 0.15 262);
+  --pt-rep: oklch(0.50 0.17 27);
+  --pt-oth: oklch(0.50 0.02 262);
+  --pt-dem-tint: oklch(0.95 0.025 262);
+  --pt-rep-tint: oklch(0.95 0.025 27);
+  --pt-oth-tint: oklch(0.95 0.005 262);
+
+  /* Status */
+  --pt-critical: oklch(0.57 0.17 52);
+  --pt-critical-tint: oklch(0.95 0.04 60);
+  --pt-warning: oklch(0.70 0.14 82);
+  --pt-warning-tint: oklch(0.96 0.05 90);
+  --pt-success: oklch(0.52 0.10 168);
+  --pt-success-tint: oklch(0.95 0.03 168);
+
+  /* Type */
+  --pt-font-display: "Libre Caslon Display", Georgia, serif;
+  --pt-font-sans: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --pt-font-mono: "IBM Plex Mono", ui-monospace, Menlo, Consolas, monospace;
+  --pt-heading-weight: 800;
+  --pt-heading-tracking: -0.02em;
+
+  /* Shape */
+  --pt-radius: 10px;
+  --pt-shadow: 0 8px 28px rgba(20, 24, 32, 0.14);
+
+  /* Motion (DESIGN.md, Motion). Durations are 0 under prefers-reduced-motion: reduce. */
+  --pt-duration-motion: 0.3s;  /* position or size changes, and fades that go with them */
+  --pt-duration-fade: 0.2s;    /* color, background, border, opacity on their own */
+
+  /* Nuxt UI semantic mapping */
+  --ui-primary: var(--pt-ink);
+  --ui-secondary: var(--pt-brass);
+  --ui-error: var(--pt-critical);
+  --ui-warning: var(--pt-warning);
+  --ui-success: var(--pt-success);
+  --ui-info: var(--pt-ink-2);
+  --ui-bg: var(--pt-paper);
+  --ui-text: var(--pt-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --pt-duration-motion: 0s;
+    --pt-duration-fade: 0s;
+  }
+}
+
+.dark {
+  --pt-paper: #0D1015;
+  --pt-surface: #151920;
+  --pt-surface-2: #1F242D;
+  --pt-ink: #E9EBEF;
+  --pt-ink-2: #AAB1BD;
+  --pt-ink-3: #868E9C;
+  --pt-rule: #2A303B;
+
+  --pt-brass: #D8A645;
+
+  --pt-dem: oklch(0.72 0.12 262);
+  --pt-rep: oklch(0.72 0.13 27);
+  --pt-oth: oklch(0.72 0.02 262);
+  --pt-dem-tint: oklch(0.27 0.05 262);
+  --pt-rep-tint: oklch(0.27 0.05 27);
+  --pt-oth-tint: oklch(0.27 0.01 262);
+
+  --pt-critical: oklch(0.74 0.15 55);
+  --pt-critical-tint: oklch(0.29 0.06 55);
+  --pt-warning: oklch(0.82 0.13 85);
+  --pt-warning-tint: oklch(0.30 0.05 85);
+  --pt-success: oklch(0.74 0.10 168);
+  --pt-success-tint: oklch(0.27 0.04 168);
+
+  --pt-shadow: 0 8px 28px rgba(0, 0, 0, 0.5);
+}
